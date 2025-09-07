@@ -5,7 +5,9 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proyectos-AGS", "Proyectos-AGS\Proyectos-AGS.csproj", "{079D1F85-EB35-4634-B36E-AEEAA7F5247C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGS services", "AGS services\AGS services.csproj", "{12807938-8460-4A76-97E4-71A7423BE87A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AGS services", "AGS services\AGS services.csproj", "{12807938-8460-4A76-97E4-71A7423BE87A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGS Models", "Models\AGS Models.csproj", "{9BC23171-A758-42F5-988E-47306DAED95D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{12807938-8460-4A76-97E4-71A7423BE87A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12807938-8460-4A76-97E4-71A7423BE87A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12807938-8460-4A76-97E4-71A7423BE87A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BC23171-A758-42F5-988E-47306DAED95D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BC23171-A758-42F5-988E-47306DAED95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BC23171-A758-42F5-988E-47306DAED95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BC23171-A758-42F5-988E-47306DAED95D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
