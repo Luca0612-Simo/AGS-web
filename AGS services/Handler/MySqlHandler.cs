@@ -48,7 +48,6 @@ namespace AGS_services.Handler
                     response = false;
                 }
             }
-
             return response;
         }
 
