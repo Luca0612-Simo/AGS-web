@@ -9,6 +9,7 @@ namespace AGS_Models.DTO
     public class UserResultDTO
     {
         public bool Result { get; set; }
-        public string Message {get;set;}
+        public string Message { get;set; }
+        public bool contrasena { get;set; }
     }
 }
