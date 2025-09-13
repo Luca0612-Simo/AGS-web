@@ -2,6 +2,7 @@
 using AGS_Models.DTO;
 using AGS_services.Handler;
 using AGS_services.Repositories;
+using AGS_services.Validators;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
@@ -16,34 +17,47 @@ namespace AGS_services
     {
         public async Task<UserResultDTO> CreateUser(User user)
         {
-            string query = $"SELECT COUNT(*) FROM usuarios WHERE mail = '{user.mail}';";
-            string result = MySqlHandler.GetScalar(query);
 
             UserResultDTO user_result = new UserResultDTO();
 
-            if (result == "0")
-            {
-                var hashed = BCrypt.Net.BCrypt.HashPassword(user.contrasena);
-                query = $"INSERT INTO usuarios (id,nombre,apellido,mail,telefono,contrasena)" +
-                    $"VALUES (null,'{user.nombre}','{user.apellido}','{user.mail}','{user.telefono}','{hashed}');";
-                bool b_result = MySqlHandler.Exec(query);
+            UserValidator validator = new UserValidator();
+            var validationResult = validator.Validate(user);
 
-                if (b_result)
+            if (!validationResult.IsValid)
+            {
+                user_result.Result = false;
+                user_result.Message = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+            else
+            {
+                string query = $"SELECT COUNT(*) FROM usuarios WHERE mail = '{user.mail}';";
+                string result = MySqlHandler.GetScalar(query);
+
+                if (result == "0")
                 {
-                    user_result.Result = true;
-                    user_result.Message = $"Usuario creado correctamente, se notificara al correo '{user.mail}'";
+                    var hashed = BCrypt.Net.BCrypt.HashPassword(user.contrasena);
+                    query = $"INSERT INTO usuarios (id,nombre,apellido,mail,telefono,contrasena)" +
+                        $"VALUES (null,'{user.nombre}','{user.apellido}','{user.mail}','{user.telefono}','{hashed}');";
+                    bool b_result = MySqlHandler.Exec(query);
+
+                    if (b_result)
+                    {
+                        user_result.Result = true;
+                        user_result.Message = $"Usuario creado correctamente, se notificara al correo '{user.mail}'";
+                    }
+                    else
+                    {
+                        user_result.Result = false;
+                        user_result.Message = "Hubo un problema al crear el usuario, intente nuevamente";
+                    }
                 }
                 else
                 {
                     user_result.Result = false;
-                    user_result.Message = "Hubo un problema al crear el usuario, intente nuevamente";
+                    user_result.Message = "Ya existe un usuario con ese correo, por favor ingrese otro";
                 }
             }
-            else
-            {
-                user_result.Result = false;
-                user_result.Message = "Ya existe un usuario con ese correo, por favor ingrese otro";
-            }
+
             return user_result;
         }
 
