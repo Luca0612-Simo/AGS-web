@@ -3,6 +3,8 @@ using AGS_Models.DTO;
 using AGS_services.Handler;
 using AGS_services.Repositories;
 using AGS_services.Validators;
+using FluentValidation;
+using FluentValidation.Results;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
@@ -15,6 +17,35 @@ namespace AGS_services
 {
     public class UserService : IUserRepository
     {
+        public async Task<bool> ChangePass(string pass, int id)
+        {
+
+            var tempUser = new User { contrasena = pass };
+            var validator = new UserValidator();
+
+            ValidationResult result = validator.Validate(tempUser, options => 
+            options.IncludeProperties(u => u.contrasena));
+
+            if (!result.IsValid)
+            {
+                return false;
+            }
+
+            string query = $"SELECT COUNT(*) FROM usuarios WHERE id = {id};";
+            string resulta = MySqlHandler.GetScalar(query);
+            if (resulta == "0")
+            {
+                return false;
+            }
+            else
+            {
+                var hashed = BCrypt.Net.BCrypt.HashPassword(pass);
+                query = $"UPDATE usuarios SET contrasena = '{hashed}', requiere_cambio_contrasena = false WHERE id = {id}";
+                return MySqlHandler.Exec(query);
+            }
+
+        }
+
         public async Task<UserResultDTO> CreateUser(User user)
         {
 
@@ -59,6 +90,24 @@ namespace AGS_services
             }
 
             return user_result;
+        }
+
+        public async Task<string> GetUserById(int id)
+        {
+
+            string query = $"SELECT COUNT(*) FROM usuarios WHERE id = {id}";
+            string result = MySqlHandler.GetScalar(query);
+            if (result == "0")
+            {
+                return "No hay usuarios con ese id";
+            }
+            else
+            {
+                query = $"SELECT * FROM usuarios WHERE id = {id}";
+                string usuario = MySqlHandler.GetJson(query);
+                return usuario ;
+                
+            }
         }
 
         public async Task<List<User>> GetUsers()

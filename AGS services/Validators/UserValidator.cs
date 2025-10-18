@@ -22,9 +22,9 @@ namespace AGS_services.Validators
                 .EmailAddress().WithMessage("Formato invalido");
             
             RuleFor(u => u.contrasena)
-                .MinimumLength(8).WithMessage("Debe tener al menos 8 caraceres");
-            //.Matches("[^a-zA-Z0-9]").WithMessage("Debe tener al menos un caracter especial");
-            //esto cuando valide que cambies la contraseña
+                .MinimumLength(8).WithMessage("Debe tener al menos 8 caraceres")
+                .Matches("[^a-zA-Z0-9]").WithMessage("Debe tener al menos un caracter especial");
+
 
             RuleFor(u => u.telefono)
                 .Matches(@"^\d+$").WithMessage("Debe ser numerico")

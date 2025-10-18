@@ -22,6 +22,12 @@ namespace Proyectos_AGS.Controllers
             return await Task.Run(() => _UserService.GetUsers());
         }
 
+        [HttpGet("GetUserById")]
+        public async Task<string> GetUserById(int id)
+        {
+            return await Task.Run(() => _UserService.GetUserById(id));
+        }
+
         [HttpPost("CreateUser")]
         public async Task<UserResultDTO> CreateUser(User user)
         {
@@ -32,6 +38,12 @@ namespace Proyectos_AGS.Controllers
         public async Task<UserResultDTO> Login(UserDTO user)
         {
             return await Task.Run(() => _UserService.Login(user));
+        }
+
+        [HttpPut("ChangePass")]
+        public async Task<bool> ChangePass(string pass, int id)
+        {
+            return await Task.Run(() => _UserService.ChangePass(pass, id));
         }
     }
 }

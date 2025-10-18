@@ -13,5 +13,7 @@ namespace AGS_services.Repositories
         public Task<List<User>> GetUsers();
         public Task<UserResultDTO> CreateUser(User user);
         public Task<UserResultDTO> Login(UserDTO user);
+        public Task<string> GetUserById(int id);
+        public Task<bool> ChangePass(string pass,int id);
     }
 }
