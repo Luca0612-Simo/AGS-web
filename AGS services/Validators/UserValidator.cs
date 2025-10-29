@@ -29,8 +29,8 @@ namespace AGS_services.Validators
             RuleFor(u => u.telefono)
                 .Matches(@"^\d+$").WithMessage("Debe ser numerico")
                 .Length(10).WithMessage("Debe tener 10 digitos");
-
         }
 
     }
 }
+

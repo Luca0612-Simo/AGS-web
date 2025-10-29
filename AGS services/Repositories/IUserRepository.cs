@@ -15,3 +15,4 @@ namespace AGS_services.Repositories
         public Task<UserResultDTO> Login(UserDTO user);
     }
 }
+
