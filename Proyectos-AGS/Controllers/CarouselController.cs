@@ -1,4 +1,5 @@
 ﻿using AGS_services.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -13,6 +14,7 @@ public class CarouselController : ControllerBase
     }
 
     [HttpPost("upload")]
+    [Authorize]
     public async Task<IActionResult> UploadImage(IFormFile file, string? title, int sortOrder)
     {
         if (file == null || file.Length == 0)

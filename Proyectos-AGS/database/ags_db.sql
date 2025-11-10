@@ -18,3 +18,6 @@ descripcion varchar(255),
 imagen varchar(50), 
 primary key(id)
 )
+
+insert into user (nombre, apellido, contrasena, mail, telefono, requiere_cambio_contrasena) values 
+("Luca", "Simonetti", "1234", "lucasimo@gmail.com", "1123904085", "?")

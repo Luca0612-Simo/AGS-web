@@ -1,6 +1,7 @@
 ﻿using AGS_Models;
 using AGS_Models.DTO;
 using AGS_services.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Proyectos_AGS.Controllers
@@ -19,6 +20,7 @@ namespace Proyectos_AGS.Controllers
         }
 
         [HttpGet("GetUsers")]
+        [Authorize]
         public async Task<List<User>> GetUsers()
         {
             return await Task.Run(() => _UserService.GetUsers());
@@ -37,3 +39,4 @@ namespace Proyectos_AGS.Controllers
             return await Task.Run(() => _UserService.Login(user));
         }
     }
+}

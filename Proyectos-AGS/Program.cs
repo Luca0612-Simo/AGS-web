@@ -1,31 +1,44 @@
-using AGS_services.Repositories;
+using AGS_models;
 using AGS_services;
+using AGS_services.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-builder.Services.AddControllers()
-    .AddApplicationPart(typeof(CarouselController).Assembly);
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-builder.Services.AddScoped<iCarouselRepository, CarouselImageRepository>();
-builder.Services.AddScoped<IFileStorageService, AwsS3Service>();
-builder.Services.AddScoped<ICarouselService, CarouselService>();
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-=======
-using AGS_services;
-using AGS_services.Handler;
-using AGS_services.Repositories;
-
-var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http, 
+        Scheme = "Bearer", 
+        BearerFormat = "JWT", 
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header, 
+        Description = "Ingrese el token"
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer" 
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(builder => {
     builder.AllowAnyOrigin();
@@ -33,30 +46,49 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(builder => {
     builder.AllowAnyHeader();
 }));
 
+var connectionString = configuration.GetConnectionString("Connection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-MySqlHandler.ConnectionString = builder.Configuration.GetConnectionString("Connection");
-builder.Services.AddSingleton<IUserRepository, UserService>();
+builder.Services.AddScoped<IUserRepository, UserService>();
+builder.Services.AddScoped<iCarouselRepository, CarouselImageRepository>();
+builder.Services.AddScoped<IFileStorageService, AwsS3Service>();
+builder.Services.AddScoped<ICarouselService, CarouselService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+            ValidateIssuer = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidateAudience = false
+        };
+    });
+
+
+builder.Services.AddAuthorization();
+
+
 
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Stock.Backend");
-    c.RoutePrefix = string.Empty;
-});
+
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
-app.MapControllers();
 app.UseCors();
-app.UseHttpsRedirection();
+
+
+app.UseAuthentication(); 
+app.UseAuthorization(); 
+
 app.MapControllers();
-app.UseAuthorization();
-app.UseAuthentication();
 
 app.Run();

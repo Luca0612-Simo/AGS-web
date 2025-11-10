@@ -34,8 +34,4 @@
     <ProjectReference Include="..\AGS models\AGS models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Models\AGS Models.csproj" />
-  </ItemGroup>
-
 </Project>
