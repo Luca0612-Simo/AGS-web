@@ -54,6 +54,8 @@ builder.Services.AddScoped<IUserRepository, UserService>();
 builder.Services.AddScoped<iCarouselRepository, CarouselImageRepository>();
 builder.Services.AddScoped<IFileStorageService, AwsS3Service>();
 builder.Services.AddScoped<ICarouselService, CarouselService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
