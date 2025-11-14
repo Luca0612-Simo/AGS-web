@@ -10,6 +10,6 @@ namespace AGS_services.Repositories
     public interface IFileStorageService
     {
     Task<string> UploadFileAsync(IFormFile file);
-        
+    string GetFileUrl(string key);
     }
 }

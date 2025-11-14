@@ -10,7 +10,7 @@ namespace AGS_models
 
         [Required]
         [StringLength(2048)] 
-        public string Url { get; set; }
+        public string ImageKey { get; set; }
 
         [StringLength(255)] 
         public string? Nombre { get; set; }
@@ -19,5 +19,8 @@ namespace AGS_models
 
         [Column(TypeName = "datetime")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [NotMapped]
+        public string Url { get; set; }
     }
 }

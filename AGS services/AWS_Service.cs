@@ -34,16 +34,17 @@ public class AwsS3Service : IFileStorageService
         };
 
         await _s3Client.PutObjectAsync(request);
-
+        return uniqueFileName;
+    }
+    public string GetFileUrl(string key)
+    {
         var presignedUrlRequest = new GetPreSignedUrlRequest
         {
             BucketName = _bucketName,
-            Key = uniqueFileName,
+            Key = key,
             Expires = DateTime.UtcNow.AddHours(1)
         };
 
-        string url = _s3Client.GetPreSignedURL(presignedUrlRequest);
-
-        return url;
+        return _s3Client.GetPreSignedURL(presignedUrlRequest);
     }
 }

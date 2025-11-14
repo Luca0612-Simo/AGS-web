@@ -17,11 +17,11 @@ namespace AGS_services
 
         public async Task<Carrusel> AddImageToCarouselAsync(IFormFile file, string? title, int sortOrder)
         {
-            string imageUrl = await _fileStorageService.UploadFileAsync(file);
+            string imageKey = await _fileStorageService.UploadFileAsync(file);
 
             var newImage = new Carrusel
             {
-                Url = imageUrl,
+                ImageKey = imageKey,
                 Nombre = title,
                 Orden = sortOrder
             };
@@ -31,7 +31,14 @@ namespace AGS_services
 
         public async Task<IEnumerable<Carrusel>> GetImages()
         {
-            return await _carouselRepository.GetAllAsync();
+            var images = await _carouselRepository.GetAllAsync();
+
+            foreach (var image in images)
+            {
+                image.Url = _fileStorageService.GetFileUrl(image.ImageKey);
+            }
+
+            return images;
         }
     }
 }
