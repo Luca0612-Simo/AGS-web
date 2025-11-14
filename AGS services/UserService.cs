@@ -9,7 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt; 
 using System.Security.Claims; 
 using System.Text; 
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
+using AGS_models.DTO;
 
 namespace AGS_services
 {
@@ -122,6 +123,115 @@ namespace AGS_services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<User> GetUserById(int id)
+        {
+   
+            var user = await _context.Usuarios.FindAsync(id);
+            return user;
+        }
+
+        public async Task<UserResultDTO> UpdateUser(int id, UserProfileDTO userDTO)
+        {
+            var user_result = new UserResultDTO();
+            var userFromDb = await _context.Usuarios.FindAsync(id);
+
+            if (userFromDb == null)
+            {
+                user_result.Result = false;
+                user_result.Message = "El usuario no se encontró";
+                return user_result;
+            }
+
+            var validator = new UserProfileDTOValidator();
+            var validationResult = validator.Validate(userDTO);
+
+            if (!validationResult.IsValid)
+            {
+                user_result.Result = false;
+                user_result.Message = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return user_result;
+            }
+
+            if (!string.IsNullOrEmpty(userDTO.nombre))
+            {
+                userFromDb.nombre = userDTO.nombre;
+            }
+            if (!string.IsNullOrEmpty(userDTO.apellido))
+            {
+                userFromDb.apellido = userDTO.apellido;
+            }
+            if (!string.IsNullOrEmpty(userDTO.mail))
+            {
+                userFromDb.mail = userDTO.mail;
+            }
+            if (!string.IsNullOrEmpty(userDTO.telefono))
+            {
+                userFromDb.telefono = userDTO.telefono;
+            }
+            if (userDTO.requiere_cambio_contrasena != null)
+            {
+                userFromDb.requiere_cambio_contrasena = userDTO.requiere_cambio_contrasena;
+            }
+
+            await _context.SaveChangesAsync();
+
+            user_result.Result = true;
+            user_result.Message = "Usuario actualizado correctamente";
+            return user_result;
+        }
+
+        public async Task<UserResultDTO> DeleteUser(int id)
+        {
+            var user_result = new UserResultDTO();
+            var userFromDb = await _context.Usuarios.FindAsync(id);
+
+            if (userFromDb == null)
+            {
+                user_result.Result = false;
+                user_result.Message = "No se encontró el usuario a eliminar";
+                return user_result;
+            }
+
+            _context.Usuarios.Remove(userFromDb); 
+            await _context.SaveChangesAsync(); 
+
+            user_result.Result = true;
+            user_result.Message = "Usuario eliminado correctamente";
+            return user_result;
+        }
+
+        public async Task<UserResultDTO> ChangePass(int id, ChangePassDTO passDto)
+        {
+            var user_result = new UserResultDTO();
+
+            var validator = new ChangePassDTOValidator();
+            var validationResult = validator.Validate(passDto);
+
+            if (!validationResult.IsValid)
+            {
+                user_result.Result = false;
+                user_result.Message = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return user_result;
+            }
+
+            var userFromDb = await _context.Usuarios.FindAsync(id);
+            if (userFromDb == null)
+            {
+                user_result.Result = false;
+                user_result.Message = "No se encontro el usuario";
+                return user_result;
+            }
+
+            userFromDb.contrasena = BCrypt.Net.BCrypt.HashPassword(passDto.NewPassword);
+            userFromDb.requiere_cambio_contrasena = "false";
+
+            await _context.SaveChangesAsync();
+
+            user_result.Result = true;
+            user_result.Message = "Contraseña actualizada correctamente";
+            return user_result;
         }
     }
 }

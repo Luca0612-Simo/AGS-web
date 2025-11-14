@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("AGS/[controller]")]
 public class CarouselController : ControllerBase
 {
     private readonly ICarouselService _carouselService;
