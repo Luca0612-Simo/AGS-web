@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Usuarios { get; set; }
 
     public DbSet<Proyecto> Proyectos { get; set; }
+    public DbSet<Servicio> Servicios { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -21,5 +22,6 @@ public class ApplicationDbContext : DbContext
 
 
         modelBuilder.Entity<Carrusel>().ToTable("carrusel");
+        modelBuilder.Entity<Servicio>().ToTable("servicios");
     }
 }
