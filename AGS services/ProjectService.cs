@@ -109,10 +109,12 @@ namespace AGS_services
                 return user_result;
             }
 
+            proyectoFromDb.estado = "Finalizado";
+            proyectoFromDb.fecha_fin = DateOnly.FromDateTime(DateTime.Now);
+            await _projectRepository.UpdateProject(proyectoFromDb);
 
-            await _projectRepository.DeleteProject(id);
             user_result.Result = true;
-            user_result.Message = "Proyecto eliminado";
+            user_result.Message = "Proyecto finalizado";
             return user_result;
         }
     }
