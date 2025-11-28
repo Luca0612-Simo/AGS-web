@@ -11,18 +11,31 @@ using System.Security.Claims;
 using System.Text; 
 using Microsoft.EntityFrameworkCore;
 using AGS_models.DTO;
+using Microsoft.AspNetCore.Http; 
+using System.Security.Claims;
 
 namespace AGS_services
 {
     public class UserService : IUserRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context; 
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IConfiguration configuration, ApplicationDbContext context)
+        public UserService(IConfiguration configuration, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
-            _context = context; 
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
+        private int? GetCurrentUserId()
+        {
+            var idClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+            if (idClaim != null && int.TryParse(idClaim.Value, out int userId))
+            {
+                return userId;
+            }
+            return null; 
         }
 
         public async Task<UserResultDTO> Login(UserDTO userDto)
@@ -86,6 +99,10 @@ namespace AGS_services
             {
                 user.contrasena = BCrypt.Net.BCrypt.HashPassword(user.contrasena);
 
+                user.fechaAlta = DateOnly.FromDateTime(DateTime.UtcNow);
+                user.creadoPor = GetCurrentUserId(); 
+                user.estaEliminado = false;
+
                 await _context.Usuarios.AddAsync(user);
                 await _context.SaveChangesAsync();
 
@@ -96,7 +113,7 @@ namespace AGS_services
         }
         public async Task<List<User>> GetUsers()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Usuarios.Where(u => !u.estaEliminado).ToListAsync();
         }
 
         private string GenerateJwtToken(User user)
@@ -125,10 +142,10 @@ namespace AGS_services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<User?> GetUserById(int id)
         {
-   
-            var user = await _context.Usuarios.FindAsync(id);
+
+            var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.id == id && !u.estaEliminado);
             return user;
         }
 
@@ -137,7 +154,7 @@ namespace AGS_services
             var user_result = new UserResultDTO();
             var userFromDb = await _context.Usuarios.FindAsync(id);
 
-            if (userFromDb == null)
+            if (userFromDb == null || userFromDb.estaEliminado)
             {
                 user_result.Result = false;
                 user_result.Message = "El usuario no se encontró";
@@ -187,14 +204,17 @@ namespace AGS_services
             var user_result = new UserResultDTO();
             var userFromDb = await _context.Usuarios.FindAsync(id);
 
-            if (userFromDb == null)
+            if (userFromDb == null || userFromDb.estaEliminado)
             {
                 user_result.Result = false;
                 user_result.Message = "No se encontró el usuario a eliminar";
                 return user_result;
             }
 
-            _context.Usuarios.Remove(userFromDb); 
+            userFromDb.estaEliminado = true; 
+            userFromDb.fechaBaja = DateOnly.FromDateTime(DateTime.UtcNow);
+            userFromDb.eliminadoPor = GetCurrentUserId();
+
             await _context.SaveChangesAsync(); 
 
             user_result.Result = true;

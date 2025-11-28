@@ -14,6 +14,9 @@ public class ServicioController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// Devuelve todos los servicios.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetServicios()
     {
@@ -21,6 +24,9 @@ public class ServicioController : ControllerBase
         return Ok(servicios);
     }
 
+    /// <summary>
+    /// Devuelve un servicio por su ID.
+    /// </summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -29,6 +35,9 @@ public class ServicioController : ControllerBase
         return Ok(servicio);
     }
 
+    /// <summary>
+    /// Crea un nuevo servicio con imagen.
+    /// </summary>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateServicio([FromForm] ServicioCreateDTO dto)
@@ -37,6 +46,9 @@ public class ServicioController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = nuevo.id }, nuevo);
     }
 
+    /// <summary>
+    /// Actualiza un servicio existente.
+    /// </summary>
     [HttpPatch("{id}")]
     [Authorize]
     public async Task<IActionResult> UpdateServicio(int id, [FromForm] ServicioUpdateDTO dto)
@@ -46,6 +58,9 @@ public class ServicioController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Elimina un servicio.
+    /// </summary>
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteServicio(int id)

@@ -16,6 +16,9 @@ namespace Proyectos_AGS.Controllers
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Envia el formulario al mail de destino.
+        /// </summary>
         [HttpPost("enviar")]
         public async Task<IActionResult> EnviarMensaje([FromBody] ContactoDTO contactoDto)
         {

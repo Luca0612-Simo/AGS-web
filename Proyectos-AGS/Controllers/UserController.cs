@@ -20,6 +20,13 @@ namespace Proyectos_AGS.Controllers
             _UserService = userService;
         }
 
+        /// <summary>
+        /// Obtiene la lista de todos los usuarios activos
+        /// </summary>
+        /// <remarks>
+        /// Necesitar autenticación. No devuelve usuarios dados de baja.
+        /// </remarks>
+        /// <returns>Lista de usuarios.</returns>
         [HttpGet("GetUsers")]
         [Authorize]
         public async Task<List<User>> GetUsers()
@@ -27,6 +34,10 @@ namespace Proyectos_AGS.Controllers
             return await Task.Run(() => _UserService.GetUsers());
         }
 
+        /// <summary>
+        /// Registra un nuevo usuario en la base de datos.
+        /// </summary>
+        /// <returns>El resultado de la operación.</returns>
         [HttpPost("CreateUser")]
         public async Task<UserResultDTO> CreateUser(User user)
         {
@@ -34,12 +45,20 @@ namespace Proyectos_AGS.Controllers
 
         }
 
+        /// <summary>
+        /// Inicia sesión y genera un Token JWT.
+        /// </summary>
+        /// <returns>Devuleve un Token si las credenciales son válidas.</returns>
         [HttpPost("Login")]
         public async Task<UserResultDTO> Login(UserDTO user)
         {
             return await Task.Run(() => _UserService.Login(user));
         }
 
+        /// <summary>
+        /// Devuelve un usuario  por su ID.
+        /// </summary>
+        /// <returns>   User si existe, o 404 Not Found.</returns>
         [HttpGet("{id}")]
         [Authorize] 
         public async Task<IActionResult> GetUserById(int id)
@@ -52,6 +71,12 @@ namespace Proyectos_AGS.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Actualiza parcialmente los datos del perfil de un usuario.
+        /// </summary>
+        /// <remarks>
+        /// No podes cambiar la contraseña desde aca. Usar ChangePass para eso.
+        /// </remarks>
         [HttpPatch("{id}")]
         [Authorize] 
         public async Task<IActionResult> UpdateUser(int id, [FromBody]UserProfileDTO userDTO)
@@ -64,7 +89,9 @@ namespace Proyectos_AGS.Controllers
             return Ok(result);
         }
 
-
+        /// <summary>
+        /// Da de baja lógica a un usuario por su id
+        /// </summary>
         [HttpDelete("{id}")]
         [Authorize] 
         public async Task<IActionResult> DeleteUser(int id)
@@ -77,6 +104,9 @@ namespace Proyectos_AGS.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Cambia la contraseña de un usuario.
+        /// </summary>
         [HttpPost("ChangePass/{id}")]
         [Authorize] 
         public async Task<IActionResult> ChangePass(int id, [FromBody] ChangePassDTO passDto)

@@ -16,6 +16,12 @@ public class ProjectController : ControllerBase
         _projectService = projectService;
     }
 
+    /// <summary>
+    /// Te devuelve todos los proyectos.
+    /// </summary>
+    /// <remarks>
+    /// Genera URLs firmadas de S3 para las imágenes en tiempo real.
+    /// </remarks>
     [HttpGet]
     public async Task<IActionResult> GetProjects()
     {
@@ -23,6 +29,9 @@ public class ProjectController : ControllerBase
         return Ok(proyectos);
     }
 
+    /// <summary>
+    /// Devuelve un proyecto por su ID.
+    /// </summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProjectById(int id)
     {
@@ -34,6 +43,9 @@ public class ProjectController : ControllerBase
         return Ok(proyecto);
     }
 
+    /// <summary>
+    /// Crea un nuevo proyecto con imagen.
+    /// </summary>
     [HttpPost]
     [Authorize] 
     public async Task<IActionResult> CreateProject([FromForm] ProjectCreateDTO projectDto)
@@ -43,6 +55,12 @@ public class ProjectController : ControllerBase
         return CreatedAtAction(nameof(GetProjectById), new { id = nuevoProyecto.id }, nuevoProyecto);
     }
 
+    /// <summary>
+    /// Actualiza un proyecto existente.
+    /// </summary>
+    /// <remarks>
+    /// Podes actualizar datos o reemplazar la imagen si se envía una nueva.
+    /// </remarks>
     [HttpPatch("{id}")]
     [Authorize] 
     public async Task<IActionResult> UpdateProject(int id, [FromForm] ProjectUpdateDTO projectDto)
@@ -55,6 +73,12 @@ public class ProjectController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Finaliza un proyecto.
+    /// </summary>
+    /// <remarks>
+    /// Cambia el estado a "Finalizado" y establece la fecha de fin a hoy, en lugar de eliminarlo.
+    /// </remarks>
     [HttpDelete("{id}")]
     [Authorize] 
     public async Task<IActionResult> DeleteProyecto(int id)
