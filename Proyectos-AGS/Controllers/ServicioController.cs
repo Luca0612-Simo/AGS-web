@@ -40,7 +40,7 @@ public class ServicioController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateServicio([FromForm] ServicioCreateDTO dto)
+    public async Task<IActionResult> CreateServicio([FromBody] ServicioCreateDTO dto)
     {
         var nuevo = await _service.AddServicio(dto);
         return CreatedAtAction(nameof(GetById), new { id = nuevo.id }, nuevo);
@@ -51,7 +51,7 @@ public class ServicioController : ControllerBase
     /// </summary>
     [HttpPatch("{id}")]
     [Authorize]
-    public async Task<IActionResult> UpdateServicio(int id, [FromForm] ServicioUpdateDTO dto)
+    public async Task<IActionResult> UpdateServicio(int id, [FromBody] ServicioUpdateDTO dto)
     {
         var result = await _service.UpdateServicio(id, dto);
         if (!result.Result) return BadRequest(result);

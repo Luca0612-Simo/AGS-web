@@ -13,7 +13,5 @@ namespace AGS_Models.DTO
         [StringLength(255)]
         public string descripcion { get; set; }
 
-        [Required]
-        public IFormFile imagenFile { get; set; }
     }
 }
