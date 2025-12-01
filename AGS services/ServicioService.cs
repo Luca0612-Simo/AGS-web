@@ -7,39 +7,28 @@ namespace AGS_services
     public class ServicioService : IServicioService
     {
         private readonly IServicioRepository _repository;
-        private readonly IFileStorageService _fileStorage;
 
-        public ServicioService(IServicioRepository repository, IFileStorageService fileStorage)
+        public ServicioService(IServicioRepository repository)
         {
             _repository = repository;
-            _fileStorage = fileStorage;
         }
 
         public async Task<IEnumerable<Servicio>> GetServicios()
         {
-            var servicios = await _repository.GetServicios();
-            foreach (var s in servicios)
-            {
-                s.Url = _fileStorage.GetFileUrl(s.imagen);
-            }
-            return servicios;
+            return await _repository.GetServicios();
         }
 
         public async Task<Servicio> GetByIdServicio(int id)
         {
-            var s = await _repository.GetByIdServicio(id);
-            if (s != null) s.Url = _fileStorage.GetFileUrl(s.imagen);
-            return s;
+            return await _repository.GetByIdServicio(id);
         }
 
         public async Task<Servicio> AddServicio(ServicioCreateDTO dto)
         {
-            string imageKey = await _fileStorage.UploadFileAsync(dto.imagenFile);
             var servicio = new Servicio
             {
                 nombre = dto.nombre,
-                descripcion = dto.descripcion,
-                imagen = imageKey
+                descripcion = dto.descripcion
             };
             return await _repository.AddServicio(servicio);
         }
@@ -58,10 +47,6 @@ namespace AGS_services
             if (!string.IsNullOrEmpty(dto.nombre)) servicio.nombre = dto.nombre;
             if (!string.IsNullOrEmpty(dto.descripcion)) servicio.descripcion = dto.descripcion;
 
-            if (dto.imagenFile != null && dto.imagenFile.Length > 0)
-            {
-                servicio.imagen = await _fileStorage.UploadFileAsync(dto.imagenFile);
-            }
 
             await _repository.UpdateServicio(servicio);
             result.Result = true;

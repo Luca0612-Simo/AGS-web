@@ -16,11 +16,5 @@ namespace AGS_Models
         [StringLength(255)]
         public string descripcion { get; set; }
 
-        [Required]
-        [StringLength(2048)]
-        public string imagen { get; set; } 
-
-        [NotMapped]
-        public string Url { get; set; } 
     }
 }
