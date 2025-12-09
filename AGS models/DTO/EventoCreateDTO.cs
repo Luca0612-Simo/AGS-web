@@ -9,5 +9,8 @@ namespace AGS_Models.DTO
 
         [Required]
         public int horas { get; set; }
+
+        [Required]
+        public DateOnly fecha { get; set; }
     }
 }

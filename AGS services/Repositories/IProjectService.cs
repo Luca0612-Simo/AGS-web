@@ -11,6 +11,7 @@ namespace AGS_services.Repositories
         Task<IEnumerable<Proyecto>> GetProjects();
         Task<Proyecto> CreateProject(ProjectCreateDTO proyectoDto);
         Task<UserResultDTO> UpdateProject(int id, ProjectUpdateDTO projectDto);
+        Task<UserResultDTO> UpdateProjectHours(int id, int newHours);
         Task<UserResultDTO> DeleteProject(int id);
     }
 }

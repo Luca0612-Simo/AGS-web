@@ -21,17 +21,16 @@ namespace Proyectos_AGS.Controllers
         }
 
         /// <summary>
-        /// Obtiene la lista de todos los usuarios activos
+        /// Devuelve usuarios filtrados por estado.
         /// </summary>
-        /// <remarks>
-        /// Necesitar autenticación. No devuelve usuarios dados de baja.
-        /// </remarks>
-        /// <returns>Lista de usuarios.</returns>
-        [HttpGet("GetUsers")]
+        /// <param name="status">Opciones: 'activo', 'inactivo'. Por defecto es 'activo'.</param>
+        [HttpGet]
         [Authorize]
-        public async Task<List<User>> GetUsers()
+        public async Task<IActionResult> GetUsersByStatus([FromQuery] string status = "activo")
         {
-            return await Task.Run(() => _UserService.GetUsers());
+            var users = await _UserService.GetUsersByStatus(status);
+
+            return Ok(users);
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Proyectos_AGS.Controllers
         /// </summary>
         /// <returns>El resultado de la operación.</returns>
         [HttpPost("CreateUser")]
-        public async Task<UserResultDTO> CreateUser(User user)
+        public async Task<UserResultDTO> CreateUser(UserCreateDTO user)
         {
             return await Task.Run(() => _UserService.CreateUser(user));
 

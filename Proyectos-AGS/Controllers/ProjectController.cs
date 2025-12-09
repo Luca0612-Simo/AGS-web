@@ -74,6 +74,24 @@ public class ProjectController : ControllerBase
     }
 
     /// <summary>
+    /// Actualiza solo la cantidad de horas trabajadas en un proyecto.
+    /// </summary>
+    /// <param name="id">ID del proyecto a actualizar.</param>
+    /// <param name="horas">El nuevo valor de horas a asignar.</param>
+    [HttpPatch("{id}/horas")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProjectHours(int id, [FromBody] int horas)
+    {
+        var result = await _projectService.UpdateProjectHours(id, horas);
+
+        if (!result.Result)
+        {
+            return NotFound(result);
+        }
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Finaliza un proyecto.
     /// </summary>
     /// <remarks>

@@ -9,7 +9,7 @@ namespace AGS_services.Validators
         {
             RuleFor(x => x.NewPassword)
                 .NotEmpty().WithMessage("La contraseña no puede estar vacía")
-                .MinimumLength(8).WithMessage("Debe tener al menos 8 caracteres");
+                .MinimumLength(8).WithMessage("La contraseña debe tener al menos 8 caracteres");
 
             RuleFor(x => x.ConfirmNewPassword)
                 .Equal(x => x.NewPassword).WithMessage("Las contraseñas no coinciden");

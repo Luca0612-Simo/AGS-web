@@ -12,7 +12,6 @@ namespace AGS_Models.DTO
         public string descripcion { get; set; }
 
         public DateOnly? fecha_inicio { get; set; }
-        public DateOnly? fecha_fin { get; set; }
         public string estado { get; set; }
         public int? horas { get; set; }
 

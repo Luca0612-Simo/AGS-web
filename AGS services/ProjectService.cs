@@ -79,10 +79,6 @@ namespace AGS_services
             {
                 proyectoFromDb.fecha_inicio = projectDto.fecha_inicio;
             }
-            if (projectDto.fecha_fin != null)
-            {
-                proyectoFromDb.fecha_fin = projectDto.fecha_fin;
-            }
             if (!string.IsNullOrEmpty(projectDto.estado))
             {
                 proyectoFromDb.estado = projectDto.estado;
@@ -97,6 +93,33 @@ namespace AGS_services
             user_result.Message = "Proyecto actualizado correctamente";
             return user_result;
         }
+
+        public async Task<UserResultDTO> UpdateProjectHours(int id, int newHours)
+        {
+            var user_result = new UserResultDTO { Result = false };
+            var proyectoFromDb = await _projectRepository.GetByIdProject(id);
+
+            if (proyectoFromDb == null)
+            {
+                user_result.Message = "Proyecto no encontrado";
+                return user_result;
+            }
+
+            if (newHours < 0)
+            {
+                user_result.Message = "Las horas no pueden ser negativas.";
+                return user_result;
+            }
+
+            proyectoFromDb.horas = newHours;
+
+            await _projectRepository.UpdateProject(proyectoFromDb);
+
+            user_result.Result = true;
+            user_result.Message = "Horas del proyecto actualizadas correctamente";
+            return user_result;
+        }
+
 
         public async Task<UserResultDTO> DeleteProject(int id)
         {
