@@ -11,10 +11,10 @@ namespace AGS_services.Repositories
 {
     public interface IUserRepository
     {
-        public Task<List<User>> GetUsers();
-        public Task<UserResultDTO> CreateUser(User user);
+        public Task<UserResultDTO> CreateUser(UserCreateDTO user);
         public Task<UserResultDTO> Login(UserDTO user);
         public Task<User?> GetUserById(int id);
+        public Task<IEnumerable<User>> GetUsersByStatus(string statusFilter);
         public Task<UserResultDTO> UpdateUser(int id, UserProfileDTO userDTO);
         public Task<UserResultDTO> DeleteUser(int id);
         public Task<UserResultDTO> ChangePass(int id, ChangePassDTO passDto);

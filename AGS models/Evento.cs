@@ -14,5 +14,8 @@ namespace AGS_Models
 
         [Required]
         public int horas { get; set; }
+
+        [Required]
+        public DateOnly fecha { get; set; }
     }
 }

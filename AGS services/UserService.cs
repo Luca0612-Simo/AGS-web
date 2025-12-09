@@ -41,12 +41,12 @@ namespace AGS_services
         public async Task<UserResultDTO> Login(UserDTO userDto)
         {
             UserResultDTO login_result = new UserResultDTO();
-            User userFromDb = await _context.Usuarios.FirstOrDefaultAsync(u => u.mail == userDto.mail);
+            User userFromDb = await _context.Usuarios.FirstOrDefaultAsync(u => u.mail == userDto.mail && !u.estaEliminado);
 
             if (userFromDb == null)
             {
                 login_result.Result = false;
-                login_result.Message = "No se encontró un usuario con ese correo.";
+                login_result.Message = "No se encontró un usuario activo con ese correo.";
             }
             else
             {
@@ -77,11 +77,11 @@ namespace AGS_services
             return login_result;
         }
 
-        public async Task<UserResultDTO> CreateUser(User user)
+        public async Task<UserResultDTO> CreateUser(UserCreateDTO userDTO)
         {
             UserResultDTO user_result = new UserResultDTO();
             UserValidator validator = new UserValidator();
-            var validationResult = validator.Validate(user);
+            var validationResult = validator.Validate(userDTO);
 
             if (!validationResult.IsValid)
             {
@@ -90,30 +90,51 @@ namespace AGS_services
                 return user_result;
             }
 
-            if (await _context.Usuarios.AnyAsync(u => u.mail == user.mail))
+            if (await _context.Usuarios.AnyAsync(u => u.mail == userDTO.mail))
             {
                 user_result.Result = false;
                 user_result.Message = "Ya existe un usuario con ese correo, por favor ingrese otro";
+                return user_result;
             }
-            else
+
+            var newUser = new User
             {
-                user.contrasena = BCrypt.Net.BCrypt.HashPassword(user.contrasena);
+                nombre = userDTO.nombre,
+                apellido = userDTO.apellido,
+                mail = userDTO.mail,
+                telefono = userDTO.telefono,
+                requiere_cambio_contrasena = userDTO.requiere_cambio_contrasena,
 
-                user.fechaAlta = DateOnly.FromDateTime(DateTime.UtcNow);
-                user.creadoPor = GetCurrentUserId(); 
-                user.estaEliminado = false;
+                contrasena = BCrypt.Net.BCrypt.HashPassword(userDTO.contrasena),
 
-                await _context.Usuarios.AddAsync(user);
-                await _context.SaveChangesAsync();
+                fechaAlta = DateOnly.FromDateTime(DateTime.UtcNow), 
+                creadoPor = GetCurrentUserId(),
+                estaEliminado = false,
+            };
 
-                user_result.Result = true;
-                user_result.Message = $"Usuario creado correctamente, se notificara al correo '{user.mail}'";
-            }
-            return user_result;
+            await _context.Usuarios.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            user_result.Result = true;
+            user_result.Message = $"Usuario creado correctamente, se notificara al correo '{newUser.mail}'";
+
+            return user_result;           
         }
-        public async Task<List<User>> GetUsers()
+
+        public async Task<IEnumerable<User>> GetUsersByStatus(string statusFilter)
         {
-            return await _context.Usuarios.Where(u => !u.estaEliminado).ToListAsync();
+            var query = _context.Usuarios.AsQueryable();
+
+            if (statusFilter.ToLower() == "activo")
+            {
+                query = query.Where(u => !u.estaEliminado);
+            }
+            else if (statusFilter.ToLower() == "inactivo")
+            {
+                query = query.Where(u => u.estaEliminado);
+            }
+
+            return await query.ToListAsync();
         }
 
         private string GenerateJwtToken(User user)
@@ -144,8 +165,7 @@ namespace AGS_services
 
         public async Task<User?> GetUserById(int id)
         {
-
-            var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.id == id && !u.estaEliminado);
+            var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.id == id);
             return user;
         }
 
@@ -186,10 +206,6 @@ namespace AGS_services
             if (!string.IsNullOrEmpty(userDTO.telefono))
             {
                 userFromDb.telefono = userDTO.telefono;
-            }
-            if (userDTO.requiere_cambio_contrasena != null)
-            {
-                userFromDb.requiere_cambio_contrasena = userDTO.requiere_cambio_contrasena;
             }
 
             await _context.SaveChangesAsync();

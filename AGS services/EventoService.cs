@@ -28,7 +28,8 @@ namespace AGS_services
             var evento = new Evento
             {
                 nombre = dto.nombre,
-                horas = dto.horas
+                horas = dto.horas,
+                fecha = dto.fecha
             };
             return await _repo.CreateEvento(evento);
         }
@@ -46,6 +47,8 @@ namespace AGS_services
 
             if (!string.IsNullOrEmpty(dto.nombre)) evento.nombre = dto.nombre;
             if (dto.horas != null) evento.horas = dto.horas.Value;
+
+            if (dto.fecha != null) evento.fecha = dto.fecha.Value;
 
             await _repo.UpdateEvento(evento);
 

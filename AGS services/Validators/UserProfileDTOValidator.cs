@@ -17,12 +17,12 @@ namespace AGS_services.Validators
                 .When(u => !string.IsNullOrEmpty(u.apellido)); 
 
             RuleFor(u => u.mail)
-                .EmailAddress().WithMessage("Formato invalido")
+                .EmailAddress().WithMessage("Formato del correo invalido")
                 .When(u => !string.IsNullOrEmpty(u.mail)); 
 
             RuleFor(u => u.telefono)
-                .Matches(@"^\d+$").WithMessage("Debe ser numerico")
-                .Length(10).WithMessage("Debe tener 10 digitos")
+                .Matches(@"^\d+$").WithMessage("El telefono debe ser numerico")
+                .Length(10).WithMessage("El telefono debe tener 10 digitos")
                 .When(u => !string.IsNullOrEmpty(u.telefono)); 
         }
     }
