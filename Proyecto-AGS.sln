@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la soluciÃ³n
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{5BA39528-C9BE-490C-8DBF-DFD68A69DF19}"
 	ProjectSection(SolutionItems) = preProject
-		Dockerfile.txt = Dockerfile.txt
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Global

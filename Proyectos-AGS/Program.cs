@@ -51,8 +51,12 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(builder => {
 }));
 
 var connectionString = configuration.GetConnectionString("Connection");
+
+var serverVersion = new MySqlServerVersion(new Version(9, 4, 0));
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, serverVersion)
+);
 
 builder.Services.AddScoped<IUserRepository, UserService>();
 builder.Services.AddScoped<iCarouselRepository, CarouselImageRepository>();
@@ -94,7 +98,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 
 app.UseAuthentication(); 
