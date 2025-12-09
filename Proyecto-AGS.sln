@@ -5,7 +5,19 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proyectos-AGS", "Proyectos-AGS\Proyectos-AGS.csproj", "{079D1F85-EB35-4634-B36E-AEEAA7F5247C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGS services", "AGS services\AGS services.csproj", "{12807938-8460-4A76-97E4-71A7423BE87A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AGS services", "AGS services\AGS services.csproj", "{12807938-8460-4A76-97E4-71A7423BE87A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AGS models", "AGS models\AGS models.csproj", "{C19954DC-80A7-4DFF-9514-9D2127305BA8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la soluciÃ³n", "Elementos de la soluciÃ³n", "{8070A334-7664-46CC-BF86-45B7467D63A1}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{5BA39528-C9BE-490C-8DBF-DFD68A69DF19}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile.txt = Dockerfile.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +33,10 @@ Global
 		{12807938-8460-4A76-97E4-71A7423BE87A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12807938-8460-4A76-97E4-71A7423BE87A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12807938-8460-4A76-97E4-71A7423BE87A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C19954DC-80A7-4DFF-9514-9D2127305BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C19954DC-80A7-4DFF-9514-9D2127305BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C19954DC-80A7-4DFF-9514-9D2127305BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C19954DC-80A7-4DFF-9514-9D2127305BA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

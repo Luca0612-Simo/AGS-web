@@ -1,0 +1,15 @@
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+
+namespace AGS_Models.DTO
+{
+    public class ServicioUpdateDTO
+    {
+        [StringLength(50)]
+        public string? nombre { get; set; }
+
+        [StringLength(255)]
+        public string? descripcion { get; set; }
+
+    }
+}

@@ -1,0 +1,72 @@
+﻿using AGS_Models.DTO;
+using AGS_services.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+[Route("AGS/[controller]")]
+[ApiController]
+public class ServicioController : ControllerBase
+{
+    private readonly IServicioService _service;
+
+    public ServicioController(IServicioService service)
+    {
+        _service = service;
+    }
+
+    /// <summary>
+    /// Devuelve todos los servicios.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetServicios()
+    {
+        var servicios = await _service.GetServicios();
+        return Ok(servicios);
+    }
+
+    /// <summary>
+    /// Devuelve un servicio por su ID.
+    /// </summary>
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var servicio = await _service.GetByIdServicio(id);
+        if (servicio == null) return NotFound(new { message = "Servicio no encontrado" });
+        return Ok(servicio);
+    }
+
+    /// <summary>
+    /// Crea un nuevo servicio con imagen.
+    /// </summary>
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> CreateServicio([FromBody] ServicioCreateDTO dto)
+    {
+        var nuevo = await _service.AddServicio(dto);
+        return CreatedAtAction(nameof(GetById), new { id = nuevo.id }, nuevo);
+    }
+
+    /// <summary>
+    /// Actualiza un servicio existente.
+    /// </summary>
+    [HttpPatch("{id}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateServicio(int id, [FromBody] ServicioUpdateDTO dto)
+    {
+        var result = await _service.UpdateServicio(id, dto);
+        if (!result.Result) return BadRequest(result);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Elimina un servicio.
+    /// </summary>
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteServicio(int id)
+    {
+        var result = await _service.DeleteServicio(id);
+        if (!result.Result) return NotFound(result);
+        return Ok(result);
+    }
+}
