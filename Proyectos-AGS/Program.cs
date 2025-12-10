@@ -19,10 +19,10 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http, 
-        Scheme = "Bearer", 
-        BearerFormat = "JWT", 
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header, 
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
         Description = "Ingrese el token"
     });
 
@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen(options =>
                 Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
                     Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer" 
+                    Id = "Bearer"
                 }
             },
             new string[] {}
@@ -44,14 +44,24 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddCors(options => options.AddDefaultPolicy(builder => {
-    builder.AllowAnyOrigin();
-    builder.AllowAnyMethod();
-    builder.AllowAnyHeader();
-}));
+var MyAllowSpecificOrigins = "AllowVercel";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins(
+                                    "https://ags-app.vercel.app",
+                                    "http://localhost:4200",
+                                    "http://localhost:5173"
+                                 )
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
 
 var connectionString = configuration.GetConnectionString("Connection");
-
 var serverVersion = new MySqlServerVersion(new Version(9, 4, 0));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -83,13 +93,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddAuthorization();
 
-
-
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -98,14 +104,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(x => x
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
 
+app.UseCors(MyAllowSpecificOrigins);
 
-app.UseAuthentication(); 
-app.UseAuthorization(); 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
