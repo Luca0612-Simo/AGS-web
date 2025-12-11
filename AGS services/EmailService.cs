@@ -102,8 +102,10 @@ namespace AGS_services
                 using (var client = new SmtpClient())
                 {
                     client.CheckCertificateRevocation = false;
-                 
-                    await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+                    
+                    var opcionesSeguridad = (port == 465) ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
+
+                    await client.ConnectAsync(host, port, opcionesSeguridad);
 
                     await client.AuthenticateAsync(emailOrigen, password);
                     
