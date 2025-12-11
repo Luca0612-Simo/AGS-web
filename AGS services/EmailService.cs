@@ -101,20 +101,31 @@ namespace AGS_services
 
                 using (var client = new SmtpClient())
                 {
-                    client.CheckCertificateRevocation = false;
-                    
-                    var opcionesSeguridad = (port == 465) ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
+                    try
+                    {
+                        Console.WriteLine($"[EMAIL] Iniciando conexión a {host}:{port}...");
 
-                    await client.ConnectAsync(host, port, opcionesSeguridad);
+                        client.CheckCertificateRevocation = false;
+                        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                    await client.AuthenticateAsync(emailOrigen, password);
-                    
-                    await client.SendAsync(message);
+                        await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+                        Console.WriteLine("[EMAIL] Conexión establecida. Autenticando...");
 
-                    await client.DisconnectAsync(true);
+                        await client.AuthenticateAsync(emailOrigen, password);
+                        Console.WriteLine("[EMAIL] Autenticado. Enviando mensaje...");
+
+                        await client.SendAsync(message);
+                        Console.WriteLine("[EMAIL] ¡Mensaje enviado con éxito!");
+
+                        await client.DisconnectAsync(true);
+                        return true;
+                    }
+                    catch (Exception exConexion)
+                    {
+                        Console.WriteLine($"[EMAIL ERROR] Falló en paso específico: {exConexion.Message}");
+                        throw;
+                    }
                 }
-
-                return true;
             }
             catch (Exception e)
             {
